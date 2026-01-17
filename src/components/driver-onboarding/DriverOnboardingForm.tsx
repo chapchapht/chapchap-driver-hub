@@ -7,6 +7,7 @@ import StepOne from "./StepOne";
 import StepTwo from "./StepTwo";
 import StepThree from "./StepThree";
 import { useToast } from "@/hooks/use-toast";
+import { uploadDriverDocument, registerDriver } from "@/lib/api";
 
 interface FormData {
   fullName: string;
@@ -14,6 +15,7 @@ interface FormData {
   homeAddress: string;
   primaryBase: string;
   otherZones: string;
+  referrerCode: string;
 }
 
 interface DocumentFiles {
@@ -38,6 +40,7 @@ const DriverOnboardingForm = () => {
     homeAddress: "",
     primaryBase: "",
     otherZones: "",
+    referrerCode: "",
   });
   const [documents, setDocuments] = useState<DocumentFiles>({
     idPhoto: null,
@@ -107,23 +110,68 @@ const DriverOnboardingForm = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  const handleSubmit = async () => {
+    if (!validateStepTwo()) return;
+
+    setIsSubmitting(true);
+
+    try {
+      // Upload all documents in parallel
+      const [idPhotoUrl, platePhotoUrl, selfiePhotoUrl] = await Promise.all([
+        uploadDriverDocument(documents.idPhoto!, 'id-photos'),
+        uploadDriverDocument(documents.licensePlatePhoto!, 'plate-photos'),
+        uploadDriverDocument(documents.selfieWithId!, 'selfie-photos'),
+      ]);
+
+      // Format WhatsApp number with country code
+      const cleanedNumber = formData.whatsappNumber.replace(/\D/g, "");
+      const formattedNumber = `+509${cleanedNumber}`;
+
+      // Submit to edge function
+      const result = await registerDriver({
+        fullName: formData.fullName,
+        whatsappNumber: formattedNumber,
+        homeAddress: formData.homeAddress,
+        primaryZone: formData.primaryBase,
+        otherZones: formData.otherZones || undefined,
+        referrerCode: formData.referrerCode || undefined,
+        idPhotoUrl,
+        platePhotoUrl,
+        selfiePhotoUrl,
+      });
+
+      if (result.success) {
+        setCurrentStep(3);
+        toast({
+          title: "Siksè!",
+          description: result.message || "Enskripsyon ou an soumèt avèk siksè.",
+        });
+      } else {
+        throw new Error(
+          Array.isArray(result.details) 
+            ? result.details.join(", ") 
+            : result.details || result.error || "Registration failed"
+        );
+      }
+    } catch (error) {
+      console.error("Submission error:", error);
+      toast({
+        title: "Erè",
+        description: error instanceof Error ? error.message : "Tanpri eseye ankò pita.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleNext = async () => {
     if (currentStep === 1) {
       if (validateStepOne()) {
         setCurrentStep(2);
       }
     } else if (currentStep === 2) {
-      if (validateStepTwo()) {
-        setIsSubmitting(true);
-        // Simulate submission
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        setIsSubmitting(false);
-        setCurrentStep(3);
-        toast({
-          title: "Siksè!",
-          description: "Enskripsyon ou an soumèt avèk siksè.",
-        });
-      }
+      await handleSubmit();
     }
   };
 
@@ -141,6 +189,7 @@ const DriverOnboardingForm = () => {
       homeAddress: "",
       primaryBase: "",
       otherZones: "",
+      referrerCode: "",
     });
     setDocuments({
       idPhoto: null,
