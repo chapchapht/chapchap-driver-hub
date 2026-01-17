@@ -1,4 +1,4 @@
-import { User, Phone, MapPin, Navigation } from "lucide-react";
+import { User, Phone, MapPin, Navigation, UserPlus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,6 +16,7 @@ interface FormData {
   homeAddress: string;
   primaryBase: string;
   otherZones: string;
+  referrerCode: string;
 }
 
 interface StepOneProps {
@@ -158,6 +159,23 @@ const StepOne = ({ formData, updateFormData, errors }: StepOneProps) => {
           />
           <p className="text-xs text-muted-foreground">
             Ekri lòt zòn kote ou konn byen (opsyonèl)
+          </p>
+        </div>
+
+        {/* Referrer Code */}
+        <div className="space-y-2">
+          <Label htmlFor="referrerCode" className="flex items-center gap-2">
+            <UserPlus className="h-4 w-4 text-accent" />
+            Kòd Referans
+          </Label>
+          <Input
+            id="referrerCode"
+            placeholder="Ex: CHAP123"
+            value={formData.referrerCode}
+            onChange={(e) => updateFormData("referrerCode", e.target.value.toUpperCase())}
+          />
+          <p className="text-xs text-muted-foreground">
+            Si yon moun refere ou, mete kòd li a (opsyonèl)
           </p>
         </div>
       </div>
