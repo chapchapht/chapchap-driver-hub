@@ -14,7 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      drivers: {
+        Row: {
+          bonus_amount: number
+          created_at: string
+          full_name: string
+          home_address: string
+          id: string
+          id_photo_url: string | null
+          other_zones: string | null
+          plate_photo_url: string | null
+          primary_zone: string
+          referrer_code: string | null
+          selfie_photo_url: string | null
+          status: string
+          updated_at: string
+          whatsapp_number: string
+        }
+        Insert: {
+          bonus_amount?: number
+          created_at?: string
+          full_name: string
+          home_address: string
+          id?: string
+          id_photo_url?: string | null
+          other_zones?: string | null
+          plate_photo_url?: string | null
+          primary_zone: string
+          referrer_code?: string | null
+          selfie_photo_url?: string | null
+          status?: string
+          updated_at?: string
+          whatsapp_number: string
+        }
+        Update: {
+          bonus_amount?: number
+          created_at?: string
+          full_name?: string
+          home_address?: string
+          id?: string
+          id_photo_url?: string | null
+          other_zones?: string | null
+          plate_photo_url?: string | null
+          primary_zone?: string
+          referrer_code?: string | null
+          selfie_photo_url?: string | null
+          status?: string
+          updated_at?: string
+          whatsapp_number?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
