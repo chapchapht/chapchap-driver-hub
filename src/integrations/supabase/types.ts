@@ -18,6 +18,7 @@ export type Database = {
         Row: {
           bonus_amount: number
           created_at: string
+          driver_id: string | null
           full_name: string
           home_address: string
           id: string
@@ -34,6 +35,7 @@ export type Database = {
         Insert: {
           bonus_amount?: number
           created_at?: string
+          driver_id?: string | null
           full_name: string
           home_address: string
           id?: string
@@ -50,6 +52,7 @@ export type Database = {
         Update: {
           bonus_amount?: number
           created_at?: string
+          driver_id?: string | null
           full_name?: string
           home_address?: string
           id?: string
@@ -70,7 +73,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_driver_id: { Args: never; Returns: string }
     }
     Enums: {
       [_ in never]: never
