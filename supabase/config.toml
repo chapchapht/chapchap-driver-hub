@@ -1,1 +1,7 @@
-project_id = "wmuzgheyxpubprpjchtr"
+project_id = "upqahcfqysxzldbbjsqs"
+
+[functions.register-driver]
+verify_jwt = false
+
+[functions.admin-drivers]
+verify_jwt = false
